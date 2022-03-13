@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 class ClientThread extends Thread implements ClientJobs{
-    private Socket client = null;		//Socket
-    private int clientNo = 0;			//Client ID
-    public BufferedReader inp = null;	//Input to Client
-    public PrintWriter outp = null;		//Output to Client
+    private final Socket client;		//Socket
+    private final int clientNo ;			//Client ID
+    public BufferedReader inp ;	//Input to Client
+    public PrintWriter outp ;		//Output to Client
 
     public ClientThread(Socket socket, int n) throws IOException {
         clientNo = n;
@@ -30,6 +30,7 @@ class ClientThread extends Thread implements ClientJobs{
 
                 words = input.split(" ");
 
+                String substring = input.substring(input.indexOf(":") + 2);
                 if (words[0].equals("Client")) {			//Msg of type -> Client X,Y: Msg
                     try {
                         String clients = words[1].substring(0, words[1].indexOf(":"));		//Find clients
@@ -38,7 +39,7 @@ class ClientThread extends Thread implements ClientJobs{
                             int no = Integer.parseInt(i);
                             if (Server.client_map.containsKey(no)) {
                                 PrintWriter targetOut = Server.client_map.get(no).outp;
-                                targetOut.printf("Received from Client %d: %s\n", clientNo, input.substring(input.indexOf(":")+2, input.length()));
+                                targetOut.printf("Received from Client %d: %s\n", clientNo, substring);
                             }
                             else {
                                 outp.printf("Server: Client %d does not exist\n", no);
@@ -51,22 +52,22 @@ class ClientThread extends Thread implements ClientJobs{
 
                 }
 
-                else if (words[0].contains("All")) {		//Send msg to all the acitve clients
+                else if (words[0].contains("All")) {		//Send msg to all the active clients
                     PrintWriter targetOut;
                     Set<Map.Entry<Integer, ClientThread> > values = Server.client_map.entrySet();
 
                     for (Map.Entry<Integer, ClientThread> me : values) {
                         targetOut = me.getValue().outp;
-                        targetOut.printf("Received from Client %d: %s\n", clientNo, input.substring(input.indexOf(":")+2, input.length()));
+                        targetOut.printf("Received from Client %d: %s\n", clientNo, substring);
                     }
                 }
 
                 else if (words[0].contains("Server") && words[1].equals("List") && words[2].equals("All")) {		//Ask server to list the active clients
                     Set <Map.Entry<Integer, ClientThread> > values = Server.client_map.entrySet();
 
-                    String clients = "";
+                    StringBuilder clients = new StringBuilder();
                     for (Map.Entry<Integer, ClientThread> me : values) {
-                        clients += me.getKey() + ", ";
+                        clients.append(me.getKey()).append(", ");
                     }
                     outp.println("Server: " + clients.substring(0, clients.length()-2));		//print comma separated list of active clients
                 }

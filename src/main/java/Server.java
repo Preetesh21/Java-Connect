@@ -1,12 +1,8 @@
-import javafx.beans.binding.MapExpression;
-import sun.reflect.generics.tree.Tree;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.*;
 import java.net.*;
+import static java.lang.System.out;
 
 public class Server implements Socket_Interface {
     public static Socket client;				//socket for client
@@ -27,37 +23,32 @@ public class Server implements Socket_Interface {
         try {
             socket = new ServerSocket(Port);
         } catch(IOException e) {
-            System.out.println(e.getMessage());
+            out.println(e.getMessage());
         }
     }
 
     @Override
     public void close_connection() {
-        try {
-            socket.close();
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-        }
     }
+
 
     @Override
     public void communicate() {
         while(true) {
             try {
-                client = (Socket) socket.accept();
+                client = socket.accept();
                 countClients++;
-                ClientThread thr = new ClientThread((Socket) client, countClients);			//create new thread for every new client
+                ClientThread thr = new ClientThread(client, countClients);			//create new thread for every new client
                 client_map.put(countClients, thr);
                 thr.start();
 
             } catch (IOException e) {
-                System.out.println(e.getMessage());
+                out.println(e.getMessage());
             }
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         int port=1222;
         if (args.length != 1) {
             System.err.println("Considering Port 1222");
@@ -69,12 +60,7 @@ public class Server implements Socket_Interface {
         Server server =new Server();
         server.connection(port);
         server.communicate();
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-        String inp;
-        while ((inp = stdIn.readLine()) == "close") {		//read data from standard input and send to server
-            server.close_connection();							//output data received from server
-        }
     }
 }
 
