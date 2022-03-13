@@ -11,12 +11,14 @@ class ClientThread extends Thread implements ClientJobs{
     private final int clientNo ;			//Client ID
     public BufferedReader inp ;	//Input to Client
     public PrintWriter outp ;		//Output to Client
+    BufferedReader stdIn;
 
     public ClientThread(Socket socket, int n) throws IOException {
         clientNo = n;
         client = socket;
         inp = new BufferedReader(new InputStreamReader(client.getInputStream()));
         outp = new PrintWriter(client.getOutputStream(), true);
+        stdIn = new BufferedReader(new InputStreamReader(System.in));
     }
 
     @Override

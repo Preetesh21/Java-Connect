@@ -1,11 +1,8 @@
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.TreeMap;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
@@ -39,7 +36,7 @@ public class Client implements Socket_Interface {
             out.close();
             socket.close();
         } catch (Exception e) {
-            out.println(e);
+            out.println(e.getMessage());
         }
     }
 
@@ -69,7 +66,7 @@ public class Client implements Socket_Interface {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         //default host and port
 
         int port = 1222;

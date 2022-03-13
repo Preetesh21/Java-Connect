@@ -5,12 +5,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 class ClientFunction extends Thread implements ClientJobs {			//listen for any incoming msgs from server
-    private Socket socket = null;
+    private Socket socket;
 
     public ClientFunction(Socket sk) {
         socket = sk;
     }
 
+    @Override
     public void run() {
         try{
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
